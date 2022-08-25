@@ -1,3 +1,7 @@
+use std::path::PathBuf;
+
+use bevy::asset::AssetPath;
+
 const THIN: u16 = 100;
 const LIGHT: u16 = 300;
 const REGULAR: u16 = 400;
@@ -148,5 +152,31 @@ impl<'a, F: FontFamily> FontBuilder<'a, F> {
     pub fn roman(&mut self) -> &mut Self {
         self.is_italic = false;
         self
+    }
+}
+
+impl<'a, 'f, F: FontFamily> From<&'a FontBuilder<'f, F>> for AssetPath<'a> {
+    fn from(font_builder: &'a FontBuilder<'f, F>) -> Self {
+        let path = if font_builder.is_italic {
+            font_builder
+                .font_family
+                .italic_fonts()
+                // TODO: Search for the best matching font weight
+                .first()
+                .unwrap()
+                .path
+                .clone()
+        } else {
+            font_builder
+                .font_family
+                .roman_fonts()
+                // TODO: Search for the best matching font weight
+                .first()
+                .unwrap()
+                .path
+                .clone()
+        };
+
+        AssetPath::new(PathBuf::from(path), None)
     }
 }
