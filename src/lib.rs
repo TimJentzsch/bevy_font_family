@@ -1,3 +1,5 @@
+pub mod prelude;
+
 use std::path::PathBuf;
 
 use bevy::asset::AssetPath;
@@ -9,9 +11,10 @@ const MEDIUM: u16 = 500;
 const BOLD: u16 = 700;
 const BLACK: u16 = 900;
 
+#[derive(Debug, Clone)]
 pub struct FontDefinition {
     /// The path to the font file, relative to the asset folder.
-    path: String,
+    pub path: String,
 
     /// The weight of the font.
     ///
@@ -23,7 +26,7 @@ pub struct FontDefinition {
     /// - 500: Medium
     /// - 700: Bold
     /// - 900: Black
-    font_weight: u16,
+    pub font_weight: u16,
 }
 
 pub trait FontFamily: Sized {
@@ -102,6 +105,7 @@ pub trait FontFamily: Sized {
     }
 }
 
+#[derive(Debug, Clone)]
 pub struct FontBuilder<'a, F: FontFamily> {
     /// The font family that this builder is for.
     font_family: &'a F,
@@ -155,8 +159,34 @@ impl<'a, F: FontFamily> FontBuilder<'a, F> {
     }
 }
 
-impl<'a, 'f, F: FontFamily> From<&'a FontBuilder<'f, F>> for AssetPath<'a> {
-    fn from(font_builder: &'a FontBuilder<'f, F>) -> Self {
+impl<'a, 'f, F: FontFamily> From<FontBuilder<'f, F>> for AssetPath<'a> {
+    fn from(font_builder: FontBuilder<'f, F>) -> Self {
+        let path = if font_builder.is_italic {
+            font_builder
+                .font_family
+                .italic_fonts()
+                // TODO: Search for the best matching font weight
+                .first()
+                .unwrap()
+                .path
+                .clone()
+        } else {
+            font_builder
+                .font_family
+                .roman_fonts()
+                // TODO: Search for the best matching font weight
+                .first()
+                .unwrap()
+                .path
+                .clone()
+        };
+
+        AssetPath::new(PathBuf::from(path), None)
+    }
+}
+
+impl<'a, 'f, F: FontFamily> From<&'a mut FontBuilder<'f, F>> for AssetPath<'a> {
+    fn from(font_builder: &'a mut FontBuilder<'f, F>) -> Self {
         let path = if font_builder.is_italic {
             font_builder
                 .font_family
