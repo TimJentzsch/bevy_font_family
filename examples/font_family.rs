@@ -1,21 +1,25 @@
 use bevy::prelude::*;
+use bevy_font_family::font_weights::*;
 use bevy_font_family::prelude::*;
 
 struct FiraSans;
 
+// TODO: Write a derive macro for this
 impl FontFamily for FiraSans {
     fn roman_fonts() -> Vec<FontDefinition> {
-        vec![FontDefinition {
-            path: "fonts/fira_sans/FiraSans-Regular.ttf".to_string(),
-            font_weight: 400,
-        }]
+        vec![
+            FontDefinition::new("fonts/fira_sans/FiraSans-Thin.ttf", THIN),
+            FontDefinition::new("fonts/fira_sans/FiraSans-Regular.ttf", REGULAR),
+            FontDefinition::new("fonts/fira_sans/FiraSans-Bold.ttf", BOLD),
+        ]
     }
 
     fn italic_fonts() -> Vec<FontDefinition> {
-        vec![FontDefinition {
-            path: "fonts/fira_sans/FiraSans-Italic.ttf".to_string(),
-            font_weight: 400,
-        }]
+        vec![
+            FontDefinition::new("fonts/fira_sans/FiraSans-ThinItalic.ttf", THIN),
+            FontDefinition::new("fonts/fira_sans/FiraSans-Italic.ttf", REGULAR),
+            FontDefinition::new("fonts/fira_sans/FiraSans-Bold.ttf", BOLD),
+        ]
     }
 }
 

@@ -2,7 +2,7 @@ use std::{marker::PhantomData, path::PathBuf};
 
 use bevy::asset::AssetPath;
 
-use crate::{font_weights::*, FontFamily};
+use crate::{font_weights::*, FontDefinition, FontFamily};
 
 #[derive(Debug, Clone)]
 pub struct FontBuilder<F: FontFamily> {
@@ -17,19 +17,24 @@ pub struct FontBuilder<F: FontFamily> {
 }
 
 impl<F: FontFamily> FontBuilder<F> {
+    fn select_closest_font_weight(
+        fonts: &[FontDefinition],
+        font_weight: u16,
+    ) -> Option<&FontDefinition> {
+        fonts
+            .iter()
+            .min_by_key(|def| ((font_weight as i32) - (def.font_weight as i32)).abs())
+    }
+
     /// Get the path to the font, based on the selected attributes.
     pub fn path(&self) -> String {
         if self.is_italic {
-            F::italic_fonts()
-                // TODO: Search for the best matching font weight
-                .first()
+            Self::select_closest_font_weight(&F::italic_fonts(), self.font_weight)
                 .unwrap()
                 .path
                 .clone()
         } else {
-            F::roman_fonts()
-                // TODO: Search for the best matching font weight
-                .first()
+            Self::select_closest_font_weight(&F::roman_fonts(), self.font_weight)
                 .unwrap()
                 .path
                 .clone()
