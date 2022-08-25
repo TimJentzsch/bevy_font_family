@@ -1,13 +1,13 @@
-use std::path::PathBuf;
+use std::{marker::PhantomData, path::PathBuf};
 
 use bevy::asset::AssetPath;
 
 use crate::{font_weights::*, FontFamily};
 
 #[derive(Debug, Clone)]
-pub struct FontBuilder<'a, F: FontFamily> {
+pub struct FontBuilder<F: FontFamily> {
     /// The font family that this builder is for.
-    pub(crate) font_family: &'a F,
+    pub(crate) font_family: PhantomData<F>,
 
     /// Whether the font should be italic.
     pub(crate) is_italic: bool,
@@ -16,7 +16,26 @@ pub struct FontBuilder<'a, F: FontFamily> {
     pub(crate) font_weight: u16,
 }
 
-impl<'a, F: FontFamily> FontBuilder<'a, F> {
+impl<F: FontFamily> FontBuilder<F> {
+    /// Get the path to the font, based on the selected attributes.
+    pub fn path(&self) -> String {
+        if self.is_italic {
+            F::italic_fonts()
+                // TODO: Search for the best matching font weight
+                .first()
+                .unwrap()
+                .path
+                .clone()
+        } else {
+            F::roman_fonts()
+                // TODO: Search for the best matching font weight
+                .first()
+                .unwrap()
+                .path
+                .clone()
+        }
+    }
+
     pub fn thin(&mut self) -> &mut Self {
         self.font_weight = THIN;
         self
@@ -58,54 +77,16 @@ impl<'a, F: FontFamily> FontBuilder<'a, F> {
     }
 }
 
-impl<'a, 'f, F: FontFamily> From<FontBuilder<'f, F>> for AssetPath<'a> {
-    fn from(font_builder: FontBuilder<'f, F>) -> Self {
-        let path = if font_builder.is_italic {
-            font_builder
-                .font_family
-                .italic_fonts()
-                // TODO: Search for the best matching font weight
-                .first()
-                .unwrap()
-                .path
-                .clone()
-        } else {
-            font_builder
-                .font_family
-                .roman_fonts()
-                // TODO: Search for the best matching font weight
-                .first()
-                .unwrap()
-                .path
-                .clone()
-        };
-
+impl<'a, F: FontFamily> From<FontBuilder<F>> for AssetPath<'a> {
+    fn from(font_builder: FontBuilder<F>) -> Self {
+        let path = font_builder.path();
         AssetPath::new(PathBuf::from(path), None)
     }
 }
 
-impl<'a, 'f, F: FontFamily> From<&'a mut FontBuilder<'f, F>> for AssetPath<'a> {
-    fn from(font_builder: &'a mut FontBuilder<'f, F>) -> Self {
-        let path = if font_builder.is_italic {
-            font_builder
-                .font_family
-                .italic_fonts()
-                // TODO: Search for the best matching font weight
-                .first()
-                .unwrap()
-                .path
-                .clone()
-        } else {
-            font_builder
-                .font_family
-                .roman_fonts()
-                // TODO: Search for the best matching font weight
-                .first()
-                .unwrap()
-                .path
-                .clone()
-        };
-
+impl<'a, F: FontFamily> From<&'a mut FontBuilder<F>> for AssetPath<'a> {
+    fn from(font_builder: &'a mut FontBuilder<F>) -> Self {
+        let path = font_builder.path();
         AssetPath::new(PathBuf::from(path), None)
     }
 }

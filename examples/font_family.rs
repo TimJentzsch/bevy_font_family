@@ -1,33 +1,21 @@
 use bevy::prelude::*;
 use bevy_font_family::prelude::*;
 
-struct FiraSans {
-    roman_fonts: Vec<FontDefinition>,
-    italic_fonts: Vec<FontDefinition>,
-}
-
-impl FiraSans {
-    pub fn new() -> Self {
-        Self {
-            roman_fonts: vec![FontDefinition {
-                path: "fonts/fira_sans/FiraSans-Regular.ttf".to_string(),
-                font_weight: 400,
-            }],
-            italic_fonts: vec![FontDefinition {
-                path: "fonts/fira_sans/FiraSans-Italic.ttf".to_string(),
-                font_weight: 400,
-            }],
-        }
-    }
-}
+struct FiraSans;
 
 impl FontFamily for FiraSans {
-    fn roman_fonts(&self) -> Vec<FontDefinition> {
-        self.roman_fonts.clone()
+    fn roman_fonts() -> Vec<FontDefinition> {
+        vec![FontDefinition {
+            path: "fonts/fira_sans/FiraSans-Regular.ttf".to_string(),
+            font_weight: 400,
+        }]
     }
 
-    fn italic_fonts(&self) -> Vec<FontDefinition> {
-        self.italic_fonts.clone()
+    fn italic_fonts() -> Vec<FontDefinition> {
+        vec![FontDefinition {
+            path: "fonts/fira_sans/FiraSans-Italic.ttf".to_string(),
+            font_weight: 400,
+        }]
     }
 }
 
@@ -40,8 +28,6 @@ fn main() {
 
 /// Spawn the camera and text nodes.
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
-    let fira_sans = FiraSans::new();
-
     commands.spawn_bundle(Camera2dBundle::default());
 
     commands
@@ -61,57 +47,9 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
         .with_children(|parent| {
             parent.spawn_bundle(TextBundle {
                 text: Text::from_section(
-                    "Roman Regular",
-                    TextStyle {
-                        font: asset_server.load(fira_sans.regular()),
-                        font_size: 60.0,
-                        color: Color::WHITE,
-                    },
-                ),
-                ..default()
-            });
-
-            parent.spawn_bundle(TextBundle {
-                text: Text::from_section(
-                    "Italic Regular",
-                    TextStyle {
-                        font: asset_server.load(fira_sans.italic()),
-                        font_size: 60.0,
-                        color: Color::WHITE,
-                    },
-                ),
-                ..default()
-            });
-
-            parent.spawn_bundle(TextBundle {
-                text: Text::from_section(
-                    "Roman Bold",
-                    TextStyle {
-                        font: asset_server.load(fira_sans.bold()),
-                        font_size: 60.0,
-                        color: Color::WHITE,
-                    },
-                ),
-                ..default()
-            });
-
-            parent.spawn_bundle(TextBundle {
-                text: Text::from_section(
-                    "Italic Bold",
-                    TextStyle {
-                        font: asset_server.load(fira_sans.bold().italic()),
-                        font_size: 60.0,
-                        color: Color::WHITE,
-                    },
-                ),
-                ..default()
-            });
-
-            parent.spawn_bundle(TextBundle {
-                text: Text::from_section(
                     "Roman Thin",
                     TextStyle {
-                        font: asset_server.load(fira_sans.thin()),
+                        font: asset_server.load(FiraSans::font().thin()),
                         font_size: 60.0,
                         color: Color::WHITE,
                     },
@@ -123,7 +61,55 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
                 text: Text::from_section(
                     "Italic Thin",
                     TextStyle {
-                        font: asset_server.load(fira_sans.thin().italic()),
+                        font: asset_server.load(FiraSans::font().thin().italic()),
+                        font_size: 60.0,
+                        color: Color::WHITE,
+                    },
+                ),
+                ..default()
+            });
+
+            parent.spawn_bundle(TextBundle {
+                text: Text::from_section(
+                    "Roman Regular",
+                    TextStyle {
+                        font: asset_server.load(FiraSans::font()),
+                        font_size: 60.0,
+                        color: Color::WHITE,
+                    },
+                ),
+                ..default()
+            });
+
+            parent.spawn_bundle(TextBundle {
+                text: Text::from_section(
+                    "Italic Regular",
+                    TextStyle {
+                        font: asset_server.load(FiraSans::font().italic()),
+                        font_size: 60.0,
+                        color: Color::WHITE,
+                    },
+                ),
+                ..default()
+            });
+
+            parent.spawn_bundle(TextBundle {
+                text: Text::from_section(
+                    "Roman Bold",
+                    TextStyle {
+                        font: asset_server.load(FiraSans::font().bold()),
+                        font_size: 60.0,
+                        color: Color::WHITE,
+                    },
+                ),
+                ..default()
+            });
+
+            parent.spawn_bundle(TextBundle {
+                text: Text::from_section(
+                    "Italic Bold",
+                    TextStyle {
+                        font: asset_server.load(FiraSans::font().bold().italic()),
                         font_size: 60.0,
                         color: Color::WHITE,
                     },
