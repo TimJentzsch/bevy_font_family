@@ -1,9 +1,15 @@
+mod derive;
 mod parse;
 
-use parse::FontFamilyAttr;
+use derive::font_family::impl_font_family;
 use proc_macro::TokenStream;
-use quote::quote;
-use syn::{Attribute, DeriveInput, Lit, Meta};
+use syn::LitStr;
+
+#[derive(Clone)]
+struct FontDefinition {
+    pub path: LitStr,
+    pub font_weight: u16,
+}
 
 /// Automatically implements the `FontFamily` trait.
 #[proc_macro_derive(LocalizationFolder, attributes(font))]
@@ -13,18 +19,5 @@ pub fn font_family_derive(input: TokenStream) -> TokenStream {
     let ast = syn::parse(input).unwrap();
 
     // Build the trait implementation
-    impl_font_family(&ast)
-}
-
-/// Implementation of the `FontFamily` derive macro.
-fn impl_font_family(ast: &DeriveInput) -> TokenStream {
-    let name = &ast.ident;
-
-    let font_attributes = parse::parse_font_family_attributes(&ast.attrs);
-
-    let gen = quote! {
-        impl LocalizationFolder for #name {
-        }
-    };
-    gen.into()
+    impl_font_family(&ast).into()
 }
