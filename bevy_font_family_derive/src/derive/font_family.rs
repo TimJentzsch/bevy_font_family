@@ -39,15 +39,23 @@ fn split_font_attributes(
 
     for attributes in attribute_lists {
         let mut path = None;
-        let font_weight = 400;
+        let mut font_weight = None;
         let mut is_italic = false;
 
         for attr in attributes {
             match attr {
                 FontFamilyAttr::Italic(_) => is_italic = true,
                 FontFamilyAttr::Path(_, path_lit) => path = Some(path_lit),
+                FontFamilyAttr::Weight(_, expr) => font_weight = Some(expr),
             }
         }
+
+        // Set a default weight if none was given
+        let font_weight = if let Some(weight) = font_weight {
+            quote! {#weight}
+        } else {
+            quote! {400}
+        };
 
         let font_definition = FontDefinition {
             path: path.expect("No path specified"),

@@ -2,30 +2,13 @@ use bevy::prelude::*;
 use bevy_font_family::font_weights::*;
 use bevy_font_family::prelude::*;
 
-// struct FiraSans;
-
-// // TODO: Write a derive macro for this
-// impl FontFamily for FiraSans {
-//     fn roman_fonts() -> Vec<FontDefinition> {
-//         vec![
-//             FontDefinition::new("fonts/fira_sans/FiraSans-Thin.ttf", THIN),
-//             FontDefinition::new("fonts/fira_sans/FiraSans-Regular.ttf", REGULAR),
-//             FontDefinition::new("fonts/fira_sans/FiraSans-Bold.ttf", BOLD),
-//         ]
-//     }
-
-//     fn italic_fonts() -> Vec<FontDefinition> {
-//         vec![
-//             FontDefinition::new("fonts/fira_sans/FiraSans-ThinItalic.ttf", THIN),
-//             FontDefinition::new("fonts/fira_sans/FiraSans-Italic.ttf", REGULAR),
-//             FontDefinition::new("fonts/fira_sans/FiraSans-Bold.ttf", BOLD),
-//         ]
-//     }
-// }
-
 #[derive(FontFamily)]
+#[font(path = "fonts/fira_sans/FiraSans-Thin.ttf", weight = THIN)]
 #[font(path = "fonts/fira_sans/FiraSans-Regular.ttf")]
+#[font(path = "fonts/fira_sans/FiraSans-Bold.ttf", weight = BOLD)]
+#[font(path = "fonts/fira_sans/FiraSans-ThinItalic.ttf", italic, weight = THIN)]
 #[font(path = "fonts/fira_sans/FiraSans-Italic.ttf", italic)]
+#[font(path = "fonts/fira_sans/FiraSans-BoldItalic.ttf", italic, weight = BOLD)]
 struct FiraSans;
 
 fn main() {

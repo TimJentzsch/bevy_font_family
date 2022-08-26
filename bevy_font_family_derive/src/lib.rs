@@ -8,7 +8,7 @@ use syn::LitStr;
 #[derive(Clone)]
 struct FontDefinition {
     pub path: LitStr,
-    pub font_weight: u16,
+    pub font_weight: proc_macro2::TokenStream,
 }
 
 /// Automatically implements the `FontFamily` trait.

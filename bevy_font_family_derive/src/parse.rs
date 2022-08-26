@@ -3,7 +3,7 @@ use syn::{
     self,
     parse::{Parse, ParseStream},
     punctuated::Punctuated,
-    Attribute, Ident, LitStr, Token,
+    Attribute, Expr, Ident, LitStr, Token,
 };
 
 pub fn parse_font_family_attributes(all_attrs: &[Attribute]) -> Vec<Vec<FontFamilyAttr>> {
@@ -26,6 +26,9 @@ pub enum FontFamilyAttr {
 
     // ident = "string literal"
     Path(Ident, LitStr),
+
+    // ident = <expr>
+    Weight(Ident, Expr),
 }
 
 impl Parse for FontFamilyAttr {
@@ -47,9 +50,16 @@ impl Parse for FontFamilyAttr {
                     _ => abort!(name, "unexpected attribute: {}", name_str),
                 }
             } else {
-                abort! {
-                    assign_token,
-                    "expected `string literal`after `=`"
+                match input.parse::<Expr>() {
+                    Ok(expr) => match &*name_str {
+                        "weight" => Ok(Weight(name, expr)),
+                        _ => abort!(name, "unexpected attribute: {}", name_str),
+                    },
+
+                    Err(_) => abort! {
+                        assign_token,
+                        "expected `string literal` or `expression` after `=`"
+                    },
                 }
             }
         } else {
