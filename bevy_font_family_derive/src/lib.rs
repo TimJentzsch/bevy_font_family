@@ -12,7 +12,7 @@ struct FontDefinition {
 }
 
 /// Automatically implements the `FontFamily` trait.
-#[proc_macro_derive(LocalizationFolder, attributes(font))]
+#[proc_macro_derive(FontFamily, attributes(font))]
 pub fn font_family_derive(input: TokenStream) -> TokenStream {
     // Construct a representation of Rust code as a syntax tree
     // that we can manipulate

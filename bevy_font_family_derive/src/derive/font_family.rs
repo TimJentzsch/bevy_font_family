@@ -18,7 +18,7 @@ pub(crate) fn impl_font_family(ast: &DeriveInput) -> TokenStream {
     let italic_token_stream = convert_to_token_stream(italic_font_definitions);
 
     quote! {
-        impl LocalizationFolder for #name {
+        impl FontFamily for #name {
             fn roman_fonts() -> Vec<FontDefinition> {
                 #roman_token_stream
             }
